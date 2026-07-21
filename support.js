@@ -35,7 +35,7 @@ async function askAI(question) {
         'X-Title': 'COGNIQ Support Bot'
       },
       body: JSON.stringify({
-        model: 'google/gemma-4-31b:free',
+        model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
         messages: [
           { role: 'system', content: 'You are COGNIQ AI Support for NEURON ecosystem. Answer in user\'s language. Be helpful and concise.' },
           { role: 'user', content: question }
@@ -43,7 +43,7 @@ async function askAI(question) {
       })
     });
     const data = await response.json();
-    console.log('OpenRouter response:', JSON.stringify(data).substring(0, 200));
+    console.log('OpenRouter response:', JSON.stringify(data).substring(0, 300));
     return data.choices?.[0]?.message?.content || null;
   } catch(e) { console.log('Fetch error:', e.message); return null; }
 }
