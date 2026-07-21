@@ -13,8 +13,8 @@ if (!BOT_TOKEN) {
 const bot = new Telegraf(BOT_TOKEN);
 
 // Подключение к БД
-const pool = new Pool({ connectionString: DATABASE_URL, ssl: { rejectUnauthorized: false } });
 
+const pool = new Pool({ connectionString: DATABASE_URL, ssl: false });
 pool.query(`CREATE TABLE IF NOT EXISTS user_langs (user_id BIGINT PRIMARY KEY, lang VARCHAR(5))`);
 
 async function getUserLang(userId) {
