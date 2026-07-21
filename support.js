@@ -126,6 +126,29 @@ async function processMessage(ctx, userMsg, isOperator) {
     await bot.telegram.sendMessage(SUPPORT_OWNER_ID, strings.forwarded_to_owner(userName, userId, userMsg), { parse_mode: 'Markdown' });
   } catch(e) {}
 }
+async function askAI(question) {
+  if (!process.env.OPENROUTER_API_KEY) return null;
+  try {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + process.env.OPENROUTER_API_KEY,
+        'HTTP-Referer': 'https://cogniqai.bothost.tech',
+        'X-Title': 'COGNIQ Support Bot'
+      },
+      body: JSON.stringify({
+        model: 'google/gemma-4-31b:free',
+        messages: [
+          { role: 'system', content: 'You are COGNIQ AI Support for NEURON ecosystem. Answer in user\'s language. Be helpful and concise.' },
+          { role: 'user', content: question }
+        ]
+      })
+    });
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || null;
+  } catch(e) { return null; }
+}
 
 bot.start(async (ctx) => {
   const { langCode, strings } = await getLang(ctx);
