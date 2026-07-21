@@ -82,7 +82,7 @@ bot.start(async (ctx) => {
   const t = getLang(ctx);
   const userName = ctx.from.first_name || 'friend';
   await ctx.replyWithPhoto(
-    { source: 'https://neuron1.bothost.tech/public/images/cogniq/neuron_logo.png' },
+    { source: './support_avatar.png' },
     {
       caption: t.welcome(userName),
       parse_mode: 'Markdown',
