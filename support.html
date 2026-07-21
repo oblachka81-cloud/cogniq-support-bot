@@ -297,10 +297,13 @@ function closeFAQ() { document.getElementById('faqModal').classList.remove('open
 document.querySelectorAll('.lang-btn').forEach(function(b) { b.classList.toggle('active', b.dataset.lang === currentLang); });
 renderFAQ();
 applyUILang();
-  var USER_ID = null;
+ var USER_ID = null;
+var urlParams = new URLSearchParams(window.location.search);
+USER_ID = urlParams.get('user_id');
+
 try {
   var tg = window.Telegram?.WebApp;
-  if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+  if (!USER_ID && tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
     USER_ID = tg.initDataUnsafe.user.id;
   }
 } catch(e) {}
@@ -313,7 +316,7 @@ if (USER_ID) {
       if (data.name) USER_NAME = data.name;
     })
     .catch(function() {});
-}
+} 
 </script>
 </body>
 </html>
