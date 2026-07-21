@@ -23,31 +23,33 @@ const LANG = {
   es: { welcome: (name) => `🛟 ¡Hola, ${name}! Soy el soporte de NEURON.`, support_btn: '🛟 Abrir centro de soporte' }
 };
 
-async function askAI(question) {
-  if (!OPENROUTER_API_KEY) { console.log('No OPENROUTER_API_KEY'); return null; }
-  try {
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'HTTP-Referer': 'https://cogniqai.bothost.tech',
-        'X-Title': 'COGNIQ Support Bot'
-      },
-      body: JSON.stringify({
-        model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
-        messages: [
-          { role: 'system', content: 'You are COGNIQ AI Support for NEURON ecosystem. Answer in user\'s language. Be helpful and concise.' },
-          { role: 'user', content: question }
-        ]
-      })
-    });
-    const data = await response.json();
-    console.log('OpenRouter response:', JSON.stringify(data).substring(0, 300));
-    return data.choices?.[0]?.message?.content || null;
-  } catch(e) { console.log('Fetch error:', e.message); return null; }
-}
 
+async function askAI(question) {
+  if (!OPENROUTER_API_KEY) return null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'HTTP-Referer': 'https://cogniqai.bothost.tech',
+          'X-Title': 'COGNIQ Support Bot'
+        },
+        body: JSON.stringify({
+          model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
+          messages: [
+            { role: 'system', content: 'You are COGNIQ AI Support for NEURON ecosystem. Answer in user\'s language. Be helpful and concise.' },
+            { role: 'user', content: question }
+          ]
+        })
+      });
+      const data = await response.json();
+      if (data.choices?.[0]?.message?.content) return data.choices[0].message.content;
+    } catch(e) {}
+  }
+  return null;
+}
 bot.start(async (ctx) => {
   const userId = ctx.from.id;
   const langCode = 'en';
