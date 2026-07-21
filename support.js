@@ -63,9 +63,8 @@ async function getLang(ctx) {
       if (rows[0]?.lang && LANG[rows[0].lang]) return { langCode: rows[0].lang, strings: LANG[rows[0].lang] };
     } catch(e) { console.error('DB error in getLang:', e.message); }
   }
-  const langCode = ctx.from?.language_code || 'en';
-  const fallback = langCode.startsWith('ru') ? 'ru' : langCode.startsWith('fr') ? 'fr' : langCode.startsWith('es') ? 'es' : 'en';
-  return { langCode: fallback, strings: LANG[fallback] };
+  // Дефолт — английский. Пользователь сам выберет язык в WebApp.
+  return { langCode: 'en', strings: LANG['en'] };
 }
 
 // /start — отдаём WebApp с языком, переданным в URL
