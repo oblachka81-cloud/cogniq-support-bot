@@ -82,6 +82,9 @@ function setLang(lang) {
   currentLang = lang;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.includes(lang.toUpperCase())));
   renderFAQ();
+  if (window.Telegram?.WebApp?.sendData) {
+    window.Telegram.WebApp.sendData(JSON.stringify({ action: 'set_lang', lang: lang }));
+  }
 }
 
 function renderFAQ() {
