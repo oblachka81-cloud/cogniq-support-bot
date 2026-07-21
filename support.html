@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>COGNIQ Support</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=block" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #07111f; font-family: 'Inter', -apple-system, sans-serif; color: #ddeeff; min-height: 100vh; padding: 20px 12px 40px; display: flex; justify-content: center; overflow-x: hidden; }
+.support-card { max-width: 480px; width: 100%; margin: 0 auto; padding: 24px 16px; }
+.logo { text-align: center; margin-bottom: 24px; }
+.logo img { height: 80px; width: auto; display: block; margin: 0 auto; }
+.title { font-size: 1.3rem; font-weight: 900; color: #00ffaa; text-align: center; margin-bottom: 6px; }
+.subtitle { font-size: 0.8rem; color: #5577aa; text-align: center; margin-bottom: 20px; }
+.faq-card { background: rgba(10,20,38,0.8); border: 1px solid rgba(255,170,0,0.12); border-radius: 20px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: border-color 0.2s; }
+.faq-card:active { border-color: rgba(0,255,170,0.5); }
+.faq-q { font-size: 0.9rem; font-weight: 700; color: #ffaa00; margin-bottom: 4px; }
+.faq-a { font-size: 0.82rem; color: #8899bb; line-height: 1.5; display: none; }
+.faq-card.open .faq-a { display: block; margin-top: 8px; }
+.chat-btn { width: 100%; padding: 14px; background: linear-gradient(90deg, #00ffaa, #00cc88); border: none; border-radius: 14px; color: #000; font-size: 1rem; font-weight: 800; cursor: pointer; margin-top: 8px; box-shadow: 0 0 30px rgba(0,255,170,0.4); }
+.lang-bar { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
+.lang-btn { padding: 6px 12px; background: rgba(10,20,38,0.6); border: 1px solid rgba(255,170,0,0.12); border-radius: 20px; color: #5577aa; font-size: 0.75rem; cursor: pointer; transition: all 0.2s; }
+.lang-btn.active { background: rgba(0,255,170,0.15); border-color: rgba(0,255,170,0.4); color: #00ffaa; }
+</style>
+</head>
+<body>
+<div class="support-card">
+
+  <div class="logo">
+    <img src="/support_avatar.png" alt="COGNIQ Support">
+  </div>
+  <div class="title">🛟 COGNIQ Support</div>
+  <div class="subtitle">Официальная поддержка экосистемы NEURON</div>
+
+  <div class="lang-bar" id="langBar">
+    <button class="lang-btn active" onclick="setLang('ru')">🇷🇺 RU</button>
+    <button class="lang-btn" onclick="setLang('en')">🇬🇧 EN</button>
+    <button class="lang-btn" onclick="setLang('fr')">🇫🇷 FR</button>
+    <button class="lang-btn" onclick="setLang('es')">🇪🇸 ES</button>
+  </div>
+
+  <div id="faqList"></div>
+
+  <button class="chat-btn" onclick="openChat()">💬 Написать в поддержку</button>
+
+</div>
+
+<script>
+const FAQ = {
+  ru: [
+    { q: '🎮 Как играть?', a: 'Открой Mini App через кнопку "Играть", отвечай на вопросы викторины и зарабатывай COGNIQ!' },
+    { q: '🪙 Что такое COGNIQ?', a: 'COGNIQ — токен экосистемы NEURON на блокчейне TON. Зарабатывай в викторине, меняй на IMPULSE, выводи на кошелёк.' },
+    { q: '💱 Как работает биржа?', a: 'На бирже NEURON EXCHANGE можно торговать криптой (TON, BTC, USDT), акциями (Apple, Tesla) и золотом (XAUt0).' },
+    { q: '⚡ Что такое IMPULSE?', a: 'IMPULSE — игровая валюта для FORTUNA, SPARK, CRASH, XXI, MINES. +500 бесплатно каждый день!' },
+  ],
+  en: [
+    { q: '🎮 How to play?', a: 'Open Mini App via "Play" button, answer quiz questions and earn COGNIQ!' },
+    { q: '🪙 What is COGNIQ?', a: 'COGNIQ is the NEURON ecosystem token on TON blockchain. Earn, exchange, withdraw.' },
+    { q: '💱 How does exchange work?', a: 'Trade crypto (TON, BTC, USDT), stocks (Apple, Tesla) and gold (XAUt0) on NEURON EXCHANGE.' },
+    { q: '⚡ What is IMPULSE?', a: 'IMPULSE is gaming currency for FORTUNA, SPARK, CRASH, XXI, MINES. +500 free daily!' },
+  ],
+  fr: [
+    { q: '🎮 Comment jouer?', a: 'Ouvre Mini App via "Jouer", réponds aux questions et gagne des COGNIQ!' },
+    { q: '🪙 Qu\'est-ce que COGNIQ?', a: 'COGNIQ est le token NEURON sur TON. Gagne, échange, retire.' },
+    { q: '💱 Comment fonctionne l\'échange?', a: 'Trade crypto (TON, BTC, USDT), actions (Apple, Tesla) et or (XAUt0) sur NEURON EXCHANGE.' },
+    { q: '⚡ Qu\'est-ce que IMPULSE?', a: 'IMPULSE — monnaie de jeu pour FORTUNA, SPARK, CRASH, XXI, MINES. +500 gratuits/jour!' },
+  ],
+  es: [
+    { q: '🎮 ¿Cómo jugar?', a: 'Abre Mini App con "Jugar", responde preguntas y gana COGNIQ!' },
+    { q: '🪙 ¿Qué es COGNIQ?', a: 'COGNIQ es el token NEURON en TON. Gana, intercambia, retira.' },
+    { q: '💱 ¿Cómo funciona el intercambio?', a: 'Opera cripto (TON, BTC, USDT), acciones (Apple, Tesla) y oro (XAUt0) en NEURON EXCHANGE.' },
+    { q: '⚡ ¿Qué es IMPULSE?', a: 'IMPULSE — moneda de juego para FORTUNA, SPARK, CRASH, XXI, MINES. +500 gratis/día!' },
+  ]
+};
+
+let currentLang = 'ru';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.textContent.includes(lang.toUpperCase())));
+  renderFAQ();
+}
+
+function renderFAQ() {
+  const faq = FAQ[currentLang] || FAQ['en'];
+  document.getElementById('faqList').innerHTML = faq.map((item, i) => `
+    <div class="faq-card" onclick="this.classList.toggle('open')">
+      <div class="faq-q">${item.q}</div>
+      <div class="faq-a">${item.a}</div>
+    </div>
+  `).join('');
+}
+
+function openChat() {
+  window.open('https://t.me/COGNIQ_aI_bot', '_blank');
+}
+
+renderFAQ();
+</script>
+</body>
+</html>
