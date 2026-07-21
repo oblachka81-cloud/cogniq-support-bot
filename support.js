@@ -94,13 +94,16 @@ http.createServer((req, res) => {
   if (req.url === '/' || req.url.startsWith('/?') || req.url === '/support.html') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
-  } else if (req.url === '/support_avatar.png') {
+} else if (req.url === '/support_avatar.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(fs.readFileSync(path.join(__dirname, 'support_avatar.png')));
-  } else {
+} else if (req.url === '/support_bg.webp') {
+    res.writeHead(200, { 'Content-Type': 'image/webp' });
+    res.end(fs.readFileSync(path.join(__dirname, 'support_bg.webp')));
+} else {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('COGNIQ AI Support');
-  }
+}
 }).listen(3000, function() { console.log('HTTP on 3000'); });
 
 bot.launch();
