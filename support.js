@@ -131,6 +131,15 @@ bot.on('text', async (ctx) => {
     console.error('Failed to forward message:', e);
   }
 });
+// HTTP сервер для Bothost (чтобы домен отвечал)
+const http = require('http');
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('COGNIQ AI Support Bot is running');
+});
+server.listen(3000, () => {
+  console.log('HTTP server listening on port 3000');
+});
 
 bot.launch();
 console.log('COGNIQ AI Support бот запущен');
