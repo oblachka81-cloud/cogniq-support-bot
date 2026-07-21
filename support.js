@@ -207,9 +207,20 @@ bot.on('text', async (ctx) => {
 
 // HTTP сервер для Bothost
 const http = require('http');
+const fs = require('fs');
+const path = require('path');
+
 const server = http.createServer((req, res) => {
-  res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('COGNIQ AI Support Bot is running');
+  if (req.url === '/' || req.url === '/support.html') {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
+  } else if (req.url === '/support_avatar.png') {
+    res.writeHead(200, { 'Content-Type': 'image/png' });
+    res.end(fs.readFileSync(path.join(__dirname, 'support_avatar.png')));
+  } else {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('COGNIQ AI Support');
+  }
 });
 server.listen(3000, () => {
   console.log('HTTP server listening on port 3000');
