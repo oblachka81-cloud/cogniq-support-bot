@@ -55,9 +55,10 @@ body { background: #07111f; font-family: 'Inter', -apple-system, sans-serif; col
     <div class="success-msg" id="successMsg">✅ Отправлено! Ответ придёт в чат с ботом.</div>
   </div>
 </div>
-
 <script>
-const FAQ = {
+var WEBAPP_URL = window.location.origin;
+
+var FAQ = {
   ru: [
     { q: '🎮 Как играть?', a: 'Открой Mini App через кнопку "Играть", отвечай на вопросы викторины и зарабатывай COGNIQ!' },
     { q: '🪙 Что такое COGNIQ?', a: 'COGNIQ — токен экосистемы NEURON на блокчейне TON.' },
@@ -105,8 +106,15 @@ function setLang(lang) {
     buttons[i].classList.toggle('active', buttons[i].dataset.lang === lang);
   }
   renderFAQ();
+  // Пробуем sendData, если нет — шлём fetch
   if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.sendData) {
     window.Telegram.WebApp.sendData(JSON.stringify({ action: 'set_lang', lang: lang }));
+  } else {
+    fetch(WEBAPP_URL + '/api', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'set_lang', lang: lang, user_id: getUserId() })
+    });
   }
 }
 
@@ -119,8 +127,16 @@ function renderFAQ() {
   document.getElementById('faqList').innerHTML = html;
 }
 
-function showSuccess() {
+function getUserId() {
+  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+    return window.Telegram.WebApp.initDataUnsafe.user.id;
+  }
+  return null;
+}
+
+function showSuccess(msg) {
   var el = document.getElementById('successMsg');
+  el.innerText = msg || '✅ Отправлено! Ответ придёт в чат с ботом.';
   el.style.display = 'block';
   document.getElementById('sendBtn').disabled = true;
   setTimeout(function() {
@@ -134,23 +150,38 @@ function sendMessage() {
   if (!msg) return;
   document.getElementById('chatInput').value = '';
 
+  var payload = JSON.stringify({ action: 'ask', message: msg, user_id: getUserId() });
+
+  // Пробуем sendData
   if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.sendData) {
-    window.Telegram.WebApp.sendData(JSON.stringify({ action: 'ask', message: msg }));
+    window.Telegram.WebApp.sendData(payload);
     showSuccess();
   } else {
-    // fallback — показываем, что нужно написать в чат
-    document.getElementById('successMsg').innerText = '⚠️ Напишите вопрос в чат с ботом';
-    showSuccess();
+    // Отправляем fetch на бэк
+    fetch(WEBAPP_URL + '/api', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
+    }).then(function(r) { return r.text(); })
+      .then(function() { showSuccess(); })
+      .catch(function() { showSuccess('⚠️ Ошибка. Напишите в чат с ботом.'); });
   }
 }
 
 function callOperator() {
+  var payload = JSON.stringify({ action: 'operator', user_id: getUserId() });
+
   if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.sendData) {
-    window.Telegram.WebApp.sendData(JSON.stringify({ action: 'operator' }));
+    window.Telegram.WebApp.sendData(payload);
     showSuccess();
   } else {
-    document.getElementById('successMsg').innerText = '⚠️ Напишите "оператор" в чат с ботом';
-    showSuccess();
+    fetch(WEBAPP_URL + '/api', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: payload
+    }).then(function(r) { return r.text(); })
+      .then(function() { showSuccess(); })
+      .catch(function() { showSuccess('⚠️ Ошибка. Напишите в чат с ботом.'); });
   }
 }
 
