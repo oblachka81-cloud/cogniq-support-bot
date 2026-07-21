@@ -148,7 +148,24 @@ bot.action('lang_menu', async (ctx) => {
     await ctx.answerCbQuery();
     await saveUserLang(ctx.from.id, lang);
     const t = LANG[lang];
-    await ctx.reply('✅ ' + (lang === 'ru' ? 'Язык: Русский' : lang === 'en' ? 'Language: English' : lang === 'fr' ? 'Langue: Français' : 'Idioma: Español'));
+    const userName = ctx.from.first_name || 'friend';
+    await ctx.replyWithPhoto(
+      { source: './support_avatar.png' },
+      {
+        caption: t.welcome(userName),
+        parse_mode: 'Markdown',
+        reply_markup: {
+          inline_keyboard: [
+            [{ text: '🌐 EN | RU | FR | ES', callback_data: 'lang_menu' }],
+            [{ text: t.btn_play, callback_data: 'faq_play' }],
+            [{ text: t.btn_cogniq, callback_data: 'faq_cogniq' }],
+            [{ text: t.btn_exchange, callback_data: 'faq_exchange' }],
+            [{ text: t.btn_impulse, callback_data: 'faq_impulse' }],
+            [{ text: t.btn_contact, callback_data: 'contact' }]
+          ]
+        }
+      }
+    );
   });
 });
 
