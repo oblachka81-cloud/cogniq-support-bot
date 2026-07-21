@@ -161,8 +161,35 @@ setInterval(() => {
   for (const [id, d] of dialogs) { if (now - d.lastActivity > DIALOG_TTL) dialogs.delete(id); }
 }, 10 * 60 * 1000);
 
-http.createServer((req, res) => {
-  if (req.url === '/' || req.url.startsWith('/?') || req.url === '/support.html') {
+http.createServer(function(req, res) {
+  if (req.url === '/api' && req.method === 'POST') {
+    var body = '';
+    req.on('data', function(chunk) { body += chunk; });
+    req.on('end', function() {
+      try {
+        var data = JSON.parse(body);
+        if (data.user_id) {
+          var chatId = data.user_id;
+          if (data.action === 'set_lang' && data.lang) {
+            pool.query('INSERT INTO user_langs (user_id, lang) VALUES ($1, $2) ON CONFLICT (user_id) DO UPDATE SET lang = $2', [chatId, data.lang]).catch(function(){});
+          }
+          if (data.action === 'ask' && data.message) {
+            var fakeCtx = { from: { id: chatId, first_name: 'User', username: null }, reply: function(text) { return bot.telegram.sendMessage(chatId, text); } };
+            processMessage(fakeCtx, data.message, false);
+          }
+          if (data.action === 'operator') {
+            var fakeCtx2 = { from: { id: chatId, first_name: 'User', username: null }, reply: function(text) { return bot.telegram.sendMessage(chatId, text); } };
+            processMessage(fakeCtx2, 'Вызов оператора из Mini App', true);
+          }
+        }
+        res.writeHead(200, { 'Content-Type': 'text/plain' });
+        res.end('ok');
+      } catch(e) {
+        res.writeHead(500);
+        res.end('error');
+      }
+    });
+  } else if (req.url === '/' || req.url.startsWith('/?') || req.url === '/support.html') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
   } else if (req.url === '/support_avatar.png') {
@@ -172,7 +199,7 @@ http.createServer((req, res) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('COGNIQ AI Support');
   }
-}).listen(3000, () => console.log('HTTP on 3000'));
+}).listen(3000, function() { console.log('HTTP on 3000'); });
 
 bot.launch();
 console.log('Support bot started');
