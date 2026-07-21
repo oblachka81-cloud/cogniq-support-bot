@@ -14,7 +14,7 @@ if (!BOT_TOKEN) { console.error('BOT_TOKEN is not set'); process.exit(1); }
 const bot = new Telegraf(BOT_TOKEN);
 const pool = new Pool({
   connectionString: DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  ssl: false
 });
 
 pool.query(`CREATE TABLE IF NOT EXISTS user_langs (user_id BIGINT PRIMARY KEY, lang VARCHAR(5))`);
