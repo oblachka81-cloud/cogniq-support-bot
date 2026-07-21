@@ -73,6 +73,48 @@ http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
   if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
+  if (req.url.startsWith('/api/user-info') && req.method === 'GET') {
+  const urlParams = new URL(req.url, 'http://localhost');
+  const userId = urlParams.searchParams.get('user_id');
+  if (!userId) {
+    res.writeHead(400);
+    return res.end(JSON.stringify({ error: 'No user_id' }));
+  }
+  try {
+    const mainDB = new Pool({ 
+      connectionString: 'postgresql://bothost_db_ebd2844d31ba:kAyzV0LV0mR5_OAkdhJIzEYChcARXoHHoAirzp21Hvk@node1.pghost.ru:15521/bothost_db_ebd2844d31ba',
+      ssl: false 
+    });
+    const { rows } = await mainDB.query(
+      'SELECT first_name, username, tg_photo_file_id FROM users WHERE telegram_id = $1',
+      [userId]
+    );
+    await mainDB.end();
+    
+    if (rows[0]) {
+      const user = rows[0];
+      let avatarUrl = null;
+      if (user.tg_photo_file_id) {
+        try {
+          const file = await bot.telegram.getFile(user.tg_photo_file_id);
+          avatarUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${file.file_path}`;
+        } catch(e) {}
+      }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        name: user.first_name || user.username || 'User',
+        avatar: avatarUrl
+      }));
+    } else {
+      res.writeHead(404);
+      res.end(JSON.stringify({ error: 'User not found' }));
+    }
+  } catch(e) {
+    res.writeHead(500);
+    res.end(JSON.stringify({ error: 'Server error' }));
+  }
+  return;
+}
 
   if (req.url === '/api/chat' && req.method === 'POST') {
     let body = '';
