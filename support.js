@@ -23,18 +23,8 @@ const LANG = {
   es: { welcome: (name) => `🛟 ¡Hola, ${name}! Soy el soporte de NEURON.`, support_btn: '🛟 Abrir centro de soporte' }
 };
 
-async function getLang(userId) {
-  if (userId) {
-    try {
-      const { rows } = await pool.query('SELECT lang FROM user_langs WHERE user_id = $1', [userId]);
-      if (rows[0]?.lang && LANG[rows[0].lang]) return { langCode: rows[0].lang, strings: LANG[rows[0].lang] };
-    } catch(e) {}
-  }
-  return { langCode: 'en', strings: LANG['en'] };
-}
-
 async function askAI(question) {
-  if (!OPENROUTER_API_KEY) return null;
+  if (!OPENROUTER_API_KEY) { console.log('No OPENROUTER_API_KEY'); return null; }
   try {
     const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
@@ -53,12 +43,22 @@ async function askAI(question) {
       })
     });
     const data = await response.json();
+    console.log('OpenRouter response:', JSON.stringify(data).substring(0, 200));
     return data.choices?.[0]?.message?.content || null;
-  } catch(e) { return null; }
+  } catch(e) { console.log('Fetch error:', e.message); return null; }
 }
 
 bot.start(async (ctx) => {
-  const { langCode, strings } = await getLang(ctx.from.id);
+  const userId = ctx.from.id;
+  const langCode = 'en';
+  const strings = LANG['en'];
+  try {
+    const { rows } = await pool.query('SELECT lang FROM user_langs WHERE user_id = $1', [userId]);
+    if (rows[0]?.lang && LANG[rows[0].lang]) {
+      langCode = rows[0].lang;
+      strings = LANG[rows[0].lang];
+    }
+  } catch(e) {}
   await ctx.replyWithPhoto({ source: './support_avatar.png' }, {
     caption: strings.welcome(ctx.from.first_name || 'friend'),
     reply_markup: { inline_keyboard: [[{ text: strings.support_btn, web_app: { url: `${WEBAPP_URL}?lang=${langCode}` } }]] }
@@ -72,7 +72,6 @@ http.createServer((req, res) => {
 
   if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
 
-  // API для чата
   if (req.url === '/api/chat' && req.method === 'POST') {
     let body = '';
     req.on('data', function(chunk) { body += chunk; });
@@ -81,16 +80,15 @@ http.createServer((req, res) => {
         const data = JSON.parse(body);
         const reply = await askAI(data.message || '');
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ reply: reply || null }));
+        res.end(JSON.stringify({ reply: reply || 'Извините, я не смог ответить.' }));
       } catch(e) {
         res.writeHead(500);
-        res.end(JSON.stringify({ reply: null }));
+        res.end(JSON.stringify({ reply: 'Ошибка сервера.' }));
       }
     });
     return;
   }
 
-  // Статика
   if (req.url === '/' || req.url.startsWith('/?') || req.url === '/support.html') {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
@@ -105,6 +103,3 @@ http.createServer((req, res) => {
 
 bot.launch();
 console.log('Support bot started');
-
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
