@@ -49,7 +49,6 @@ const LANG = {
     forwarded_to_owner: (userName, userId, msg) => `📩 **Mensaje de ${userName}** (ID: ${userId})\n\n${msg}`,
   }
 };
-
 async function getLang(ctx) {
   const userId = ctx.from?.id;
   if (userId) {
@@ -58,9 +57,10 @@ async function getLang(ctx) {
       if (rows[0]?.lang && LANG[rows[0].lang]) return LANG[rows[0].lang];
     } catch(e) {}
   }
-  const langCode = ctx.from?.language_code || 'en';
-  return LANG[langCode] || LANG['en'];
+  // fallback — английский вместо language_code
+  return LANG['en'];
 }
+
 
 bot.start(async (ctx) => {
   const t = await getLang(ctx);
