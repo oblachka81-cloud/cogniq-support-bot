@@ -105,20 +105,14 @@ async function getLang(ctx) {
   return LANG[langCode] || LANG['en'];
 }
 
+
 function getMenuKeyboard(t) {
   return {
     inline_keyboard: [
-      [{ text: '🛟 Открыть центр поддержки', web_app: { url: 'https://cogniqai.bothost.tech' } }],
-      [{ text: '🌐 EN | RU | FR | ES', callback_data: 'lang_menu' }],
-      [{ text: t.btn_play, callback_data: 'faq_play' }],
-      [{ text: t.btn_cogniq, callback_data: 'faq_cogniq' }],
-      [{ text: t.btn_exchange, callback_data: 'faq_exchange' }],
-      [{ text: t.btn_impulse, callback_data: 'faq_impulse' }],
-      [{ text: t.btn_contact, callback_data: 'contact' }]
+      [{ text: '🛟 Открыть центр поддержки', web_app: { url: 'https://cogniqai.bothost.tech' } }]
     ]
   };
 }
-
 bot.start(async (ctx) => {
   const t = await getLang(ctx);
   const userName = ctx.from.first_name || 'friend';
