@@ -63,7 +63,7 @@ bot.start(async (ctx) => {
   } catch(e) {}
   await ctx.replyWithPhoto({ source: './support_avatar.png' }, {
     caption: strings.welcome(ctx.from.first_name || 'friend'),
-    reply_markup: { inline_keyboard: [[{ text: strings.support_btn, web_app: { url: `${WEBAPP_URL}?lang=${langCode}` } }]] }
+    reply_markup: { inline_keyboard: [[{ text: strings.support_btn, web_app: { url: `${WEBAPP_URL}?lang=${langCode}&user_id=${ctx.from.id}` } }]] }
   });
 });
 
