@@ -176,9 +176,16 @@ bot.on('web_app_data', async (ctx) => {
 });
 
 bot.on('text', async (ctx) => {
-  await processMessage(ctx, ctx.message.text, false);
+  const userMsg = ctx.message.text;
+  
+  const aiReply = await askAI(userMsg);
+  if (aiReply) {
+    await ctx.reply(aiReply);
+    return;
+  }
+  
+  await processMessage(ctx, userMsg, false);
 });
-
 setInterval(() => {
   const now = Date.now();
   for (const [id, d] of dialogs) { if (now - d.lastActivity > DIALOG_TTL) dialogs.delete(id); }
