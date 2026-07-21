@@ -89,6 +89,13 @@ body::before {
 .chat-messages { max-height: 300px; overflow-y: auto; margin-bottom: 12px; }
 .msg { margin-bottom: 8px; padding: 8px 12px; border-radius: 12px; font-size: 0.85rem; line-height: 1.4; max-width: 85%; }
 .msg.user { background: rgba(0,255,170,0.2); margin-left: auto; text-align: right; color: #fff; }
+  .msg.user .user-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-left: 8px;
+}
 .msg.ai {
   background: transparent;
   margin-right: auto;
@@ -245,7 +252,7 @@ function renderFAQ() {
   }).join('');
 }
 
-function addMessage(text, type, name) {
+function addMessage(text, type, name, avatar) {
   var container = document.getElementById('chatMessages');
   var div = document.createElement('div');
   div.className = 'msg ' + (type || 'user');
@@ -253,7 +260,8 @@ function addMessage(text, type, name) {
   if (type === 'ai') {
     div.innerHTML = '<img class="ai-avatar" src="/support_avatar.png" alt="AI"><div class="ai-text">' + text + '</div>';
   } else {
-    div.innerHTML = (name ? '<div class="user-name">' + name + '</div>' : '') + text;
+    var avatarHtml = avatar ? '<img class="user-avatar" src="' + avatar + '" alt="You">' : '';
+    div.innerHTML = '<div style="flex:1">' + (name ? '<div class="user-name">' + name + '</div>' : '') + text + '</div>' + avatarHtml;
   }
   container.appendChild(div);
   container.scrollTop = container.scrollHeight;
@@ -264,7 +272,7 @@ function sendMessage() {
   var msg = input.value.trim();
   if (!msg) return;
 
-  addMessage(msg, 'user', USER_NAME);
+  addMessage(msg, 'user', USER_NAME, USER_AVATAR);
   input.value = '';
 
   fetch('/api/chat', {
@@ -309,14 +317,16 @@ try {
 } catch(e) {}
 
 var USER_NAME = 'You';
+var USER_AVATAR = null;
 if (USER_ID) {
   fetch('/api/user-info?user_id=' + USER_ID)
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (data.name) USER_NAME = data.name;
+      if (data.avatar) USER_AVATAR = data.avatar;
     })
     .catch(function() {});
-} 
+}
 </script>
 </body>
 </html>
