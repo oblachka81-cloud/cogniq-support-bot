@@ -1,0 +1,12 @@
+{
+  "name": "cogniq-support-bot",
+  "version": "1.0.0",
+  "description": "COGNIQ AI Support Bot for NEURON ecosystem",
+  "main": "support.js",
+  "scripts": {
+    "start": "node support.js"
+  },
+  "dependencies": {
+    "telegraf": "^4.16.3"
+  }
+}
