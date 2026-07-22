@@ -29,23 +29,9 @@ const LANG = {
 };
 
 async function askAI(question) {
-  if (!OPENROUTER_API_KEY) {
-    console.log('[SUPPORT] OPENROUTER_API_KEY не задан');
-    return null;
-  }
-  
-  const models = [
-    'nvidia/nemotron-3-ultra-550b-a55b:free',
-    'nvidia/nemotron-3-super-120b-a12b:free',
-    'google/gemma-4-31b:free',
-    'google/gemma-4-26b-a4b:free',
-    'openai/gpt-oss-20b:free',
-    'cohere/north-mini-code:free'
-];
-  
-  for (const model of models) {
+  // Уровень 1: OpenRouter (бесплатные 50 запросов/день)
+  if (OPENROUTER_API_KEY) {
     try {
-      console.log('[SUPPORT] Пробую модель:', model);
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -55,7 +41,7 @@ async function askAI(question) {
           'X-Title': 'COGNIQ Support Bot'
         },
         body: JSON.stringify({
-          model: model,
+          model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
           messages: [
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: question }
@@ -63,24 +49,42 @@ async function askAI(question) {
         })
       });
       const data = await response.json();
-      
       if (data.choices?.[0]?.message?.content) {
-        console.log('[SUPPORT] Успех с моделью:', model);
+        console.log('[SUPPORT] OpenRouter ответил');
         return data.choices[0].message.content;
       }
-      
-      if (data.error?.code === 429) {
-        console.log('[SUPPORT] Лимит исчерпан для', model, ', пробую следующую');
-        continue;
-      }
-      
-      console.log('[SUPPORT] Ошибка модели', model, ':', JSON.stringify(data).slice(0, 200));
-    } catch(e) {
-      console.log('[SUPPORT] Ошибка сети для', model, ':', e.message);
-    }
+    } catch(e) {}
   }
   
-  console.log('[SUPPORT] Все модели не ответили');
+  // Уровень 2: YandexGPT 5 Lite (безлимитно, дёшево)
+  const apiKey = process.env.YANDEXGPT_API_KEY || '';
+  const folderId = process.env.YANDEXGPT_FOLDER_ID || process.env.YANDEX_FOLDER_ID || '';
+  
+  if (apiKey && folderId) {
+    try {
+      const response = await fetch('https://ai.api.cloud.yandex.net/v1/responses', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Api-Key ${apiKey}`,
+          'OpenAI-Project': folderId
+        },
+        body: JSON.stringify({
+          model: `gpt://${folderId}/yandexgpt-5-lite/latest`,
+          instructions: SYSTEM_PROMPT,
+          input: question,
+          temperature: 0.3,
+          max_output_tokens: 500
+        })
+      });
+      const data = await response.json();
+      if (data.output_text) {
+        console.log('[SUPPORT] YandexGPT ответил');
+        return data.output_text;
+      }
+    } catch(e) {}
+  }
+  
   return null;
 }
 
