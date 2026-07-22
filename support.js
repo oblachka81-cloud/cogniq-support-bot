@@ -63,7 +63,7 @@ async function askAI(question) {
   
   // Уровень 2: YandexGPT
   const apiKey = process.env.YANDEXGPT_API_KEY || '';
-  const folderId = process.env.YANDEXGPT_FOLDER_ID || process.env.YANDEX_FOLDER_ID || '';
+  const folderId = process.env.YANDEX_FOLDER_ID || process.env.YANDEXGPT_FOLDER_ID || '';
   
   console.log('[SUPPORT] YandexGPT ключ есть:', !!apiKey, 'папка есть:', !!folderId);
   
