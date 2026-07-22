@@ -76,6 +76,7 @@ bot.start(async (ctx) => {
 });
 
 http.createServer(async (req, res) => {
+  console.log('[SUPPORT] Запрос:', req.method, req.url);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
