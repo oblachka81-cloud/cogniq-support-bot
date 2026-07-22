@@ -204,15 +204,18 @@ http.createServer(async (req, res) => {
     } else if (req.url === '/support_lang_ru.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(fs.readFileSync(path.join(__dirname, 'support_lang_ru.png')));
-} else if (req.url === '/support_lang_en.png') {
+    } else if (req.url === '/support_lang_en.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(fs.readFileSync(path.join(__dirname, 'support_lang_en.png')));
-} else if (req.url === '/support_lang_fr.png') {
+    } else if (req.url === '/support_lang_fr.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(fs.readFileSync(path.join(__dirname, 'support_lang_fr.png')));
-} else if (req.url === '/support_lang_es.png') {
+    } else if (req.url === '/support_lang_es.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(fs.readFileSync(path.join(__dirname, 'support_lang_es.png')));
+    } else if (req.url === '/support_faq_btn.png') {
+    res.writeHead(200, { 'Content-Type': 'image/png' });
+    res.end(fs.readFileSync(path.join(__dirname, 'support_faq_btn.png')));
   } else {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('COGNIQ AI Support');
