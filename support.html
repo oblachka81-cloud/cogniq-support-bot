@@ -70,7 +70,6 @@ body::before {
 .modal-overlay.open { display: flex; }
 .modal-box { background: rgba(10,20,38,0.95); backdrop-filter: blur(15px); border: 1px solid rgba(255,170,0,0.3); border-radius: 24px; padding: 20px; width: 90%; max-width: 480px; max-height: 80vh; overflow-y: auto; position: relative; }
 .modal-close { position: sticky; top: 0; float: right; background: none; border: none; color: #ffaa00; font-size: 1.5rem; cursor: pointer; }
-.faq-open-btn { padding: 12px 24px; border: none; border-radius: 12px; color: #000; font-weight: 800; cursor: pointer; width: 100%; background: linear-gradient(90deg, #ffaa00, #ff6600); margin-bottom: 16px; font-size: 1rem; }
 .faq-card { background: rgba(10,20,38,0.7); backdrop-filter: blur(8px); border: 1px solid rgba(255,170,0,0.2); border-radius: 20px; padding: 16px; margin-bottom: 8px; cursor: pointer; }
 .faq-q { font-size: 0.9rem; font-weight: 700; color: #ffaa00; }
 .faq-a { font-size: 0.82rem; color: #ccddee; line-height: 1.5; display: none; margin-top: 8px; }
@@ -132,7 +131,9 @@ body::before {
     </button>
 </div>
 
-  <button class="faq-open-btn" onclick="openFAQ()">❓ Частые вопросы (FAQ)</button>
+  <button onclick="openFAQ()" style="background:none;border:none;padding:0;cursor:pointer;width:100%;margin-bottom:16px;">
+    <img src="/support_faq_btn.png" style="width:100%;height:auto;display:block;">
+</button>
 
   <div class="modal-overlay" id="faqModal" onclick="if(event.target===this) closeFAQ()">
     <div class="modal-box">
