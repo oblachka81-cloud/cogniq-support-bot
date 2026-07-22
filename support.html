@@ -257,7 +257,7 @@ function addMessage(text, type, name, avatar) {
   if (type === 'ai') {
     div.innerHTML = '<img class="ai-avatar" src="/support_avatar.png" alt="AI"><div class="ai-text">' + text + '</div>';
   } else {
-    div.innerHTML = (name ? '<div class="user-name">' + name + '</div>' : '') + text + (avatar ? '<img class="user-avatar" src="' + avatar + '">' : '');
+   div.innerHTML = (avatar ? '<img class="user-avatar" src="' + avatar + '" style="order:2;">' : '') + '<div style="flex:1;">' + (name ? '<div class="user-name">' + name + '</div>' : '') + text + '</div>'; 
   }
   container.appendChild(div);
   container.scrollTop = container.scrollHeight;
