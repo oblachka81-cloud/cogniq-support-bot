@@ -53,18 +53,6 @@ body::before {
   flex-shrink: 0;
 }
 
-/* Режимы */
-.mode-bar { display: flex; gap: 6px; margin-bottom: 16px; }
-.mode-btn {
-  flex: 1; padding: 10px 8px; border-radius: 12px;
-  font-size: 0.82rem; font-weight: 700; cursor: pointer;
-  background: rgba(10,20,38,0.6); backdrop-filter: blur(4px);
-  border: 1px solid rgba(255,170,0,0.2); color: #8899cc;
-  transition: all 0.2s;
-}
-.mode-btn.active-support { background: rgba(0,255,170,0.15); border-color: rgba(0,255,170,0.5); color: #00ffaa; }
-.mode-btn.active-chat { background: rgba(255,170,0,0.15); border-color: rgba(255,170,0,0.5); color: #ffaa00; }
-
 /* FAQ */
 .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: flex-start; padding-top: 60px; }
 .modal-overlay.open { display: flex; }
@@ -104,7 +92,7 @@ body::before {
 .btn { padding: 12px 16px; border: none; border-radius: 12px; color: #000; font-weight: 800; cursor: pointer; background: linear-gradient(90deg, #00ffaa, #00cc88); }
 
 /* Языки */
-.lang-bar { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
+.lang-bar { display: flex; gap: 6px; justify-content: center; margin-bottom: 8px; }
 </style>
 </head>
 <body>
@@ -116,7 +104,7 @@ body::before {
   </div>
   <div class="subtitle">Официальная поддержка экосистемы NEURON</div>
 
-  <div class="lang-bar" id="langBar" style="display:flex;gap:6px;justify-content:center;margin-bottom:16px;">
+  <div class="lang-bar" id="langBar" style="display:flex;gap:6px;justify-content:center;margin-bottom:8px;">
     <button data-lang="ru" style="background:none;border:none;padding:0;cursor:pointer;filter:brightness(1.3)drop-shadow(0 0 6px #f472b6);">
         <img src="/support_lang_ru.png" style="height:34px;width:auto;display:block;">
     </button>
@@ -131,7 +119,7 @@ body::before {
     </button>
 </div>
 
-  <button onclick="openFAQ()" style="background:none;border:none;padding:0;cursor:pointer;width:100%;margin-bottom:16px;">
+  <button onclick="openFAQ()" style="background:none;border:none;padding:0;cursor:pointer;width:100%;margin-bottom:8px;">
     <img src="/support_faq_btn.png" style="width:100%;height:auto;display:block;">
 </button>
 
@@ -142,7 +130,7 @@ body::before {
     </div>
   </div>
 
-  <div class="mode-bar" style="display:flex;gap:6px;margin-bottom:16px;">
+  <div class="mode-bar" style="display:flex;gap:6px;margin-bottom:8px;">
     <button id="modeSupport" onclick="setMode('support')" style="background:none;border:none;padding:0;cursor:pointer;flex:1;filter:brightness(1.3)drop-shadow(0 0 6px #f472b6);">
         <img src="/support_mode_support.png" style="width:100%;height:auto;display:block;">
     </button>
