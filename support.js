@@ -29,9 +29,10 @@ const LANG = {
 };
 
 async function askAI(question) {
-  // Уровень 1: OpenRouter (бесплатные 50 запросов/день)
+  // Уровень 1: OpenRouter
   if (OPENROUTER_API_KEY) {
     try {
+      console.log('[SUPPORT] Пробую OpenRouter...');
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -49,19 +50,26 @@ async function askAI(question) {
         })
       });
       const data = await response.json();
+      console.log('[SUPPORT] OpenRouter ответ:', JSON.stringify(data).slice(0, 300));
       if (data.choices?.[0]?.message?.content) {
-        console.log('[SUPPORT] OpenRouter ответил');
+        console.log('[SUPPORT] OpenRouter успех');
         return data.choices[0].message.content;
       }
-    } catch(e) {}
+      console.log('[SUPPORT] OpenRouter не ответил (лимит или ошибка)');
+    } catch(e) {
+      console.log('[SUPPORT] OpenRouter ошибка:', e.message);
+    }
   }
   
-  // Уровень 2: YandexGPT 5 Lite (безлимитно, дёшево)
+  // Уровень 2: YandexGPT
   const apiKey = process.env.YANDEXGPT_API_KEY || '';
   const folderId = process.env.YANDEXGPT_FOLDER_ID || process.env.YANDEX_FOLDER_ID || '';
   
+  console.log('[SUPPORT] YandexGPT ключ есть:', !!apiKey, 'папка есть:', !!folderId);
+  
   if (apiKey && folderId) {
     try {
+      console.log('[SUPPORT] Пробую YandexGPT...');
       const response = await fetch('https://ai.api.cloud.yandex.net/v1/responses', {
         method: 'POST',
         headers: {
@@ -78,13 +86,18 @@ async function askAI(question) {
         })
       });
       const data = await response.json();
+      console.log('[SUPPORT] YandexGPT ответ:', JSON.stringify(data).slice(0, 500));
       if (data.output_text) {
-        console.log('[SUPPORT] YandexGPT ответил');
+        console.log('[SUPPORT] YandexGPT успех');
         return data.output_text;
       }
-    } catch(e) {}
+      console.log('[SUPPORT] YandexGPT не ответил');
+    } catch(e) {
+      console.log('[SUPPORT] YandexGPT ошибка:', e.message);
+    }
   }
   
+  console.log('[SUPPORT] Все модели молчат');
   return null;
 }
 
