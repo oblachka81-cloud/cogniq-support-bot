@@ -80,7 +80,19 @@ body::before {
 .chat-section { margin-top: 16px; background: transparent; border: none; padding: 0; }
 .chat-messages { max-height: 300px; overflow-y: auto; margin-bottom: 12px; }
 .msg { margin-bottom: 8px; padding: 8px 12px; border-radius: 12px; font-size: 0.85rem; line-height: 1.4; max-width: 85%; }
-.msg.user { background: rgba(0,255,170,0.2); margin-left: auto; text-align: right; color: #fff; display: flex; align-items: flex-end; flex-direction: row; gap: 8px; }
+.msg.user {
+  background: transparent;
+  margin-left: auto;
+  text-align: right;
+  color: #00cc88;
+  font-weight: 500;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: row;
+  gap: 8px;
+  border-right: 2px solid rgba(0,255,170,0.3);
+  padding-right: 12px;
+}
 .msg.user .user-avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; }
 .msg.ai { background: transparent; margin-right: auto; color: #fff; display: flex; align-items: flex-start; gap: 8px; padding: 8px 0; max-width: 100%; }
 .msg.ai .ai-avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; }
