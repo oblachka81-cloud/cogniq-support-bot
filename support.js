@@ -87,7 +87,10 @@ async function askAI(question) {
       });
       const data = await response.json();
       console.log('[SUPPORT] YandexGPT ответ:', JSON.stringify(data).slice(0, 500));
-      if (data.output_text) {
+      if (data.output?.[0]?.content?.[0]?.text) {
+      console.log('[SUPPORT] YandexGPT успех');
+      return data.output[0].content[0].text;
+      }
         console.log('[SUPPORT] YandexGPT успех');
         return data.output_text;
       }
