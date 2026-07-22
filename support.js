@@ -20,19 +20,21 @@ pool.query(`CREATE TABLE IF NOT EXISTS user_avatars (user_id BIGINT PRIMARY KEY,
 pool.query(`CREATE TABLE IF NOT EXISTS support_tickets (id SERIAL PRIMARY KEY, user_id BIGINT, message TEXT, created_at TIMESTAMPTZ DEFAULT NOW())`);
 
 // Системный промт для AI — полная база знаний о NEURON
-const SYSTEM_PROMPT = `You are COGNIQ AI Support, a friendly and knowledgeable assistant. You are an expert on the NEURON blockchain gaming ecosystem on TON. You can also chat casually about other topics in any language the user uses.
+const SYSTEM_PROMPT = `You are COGNIQ AI Support, a friendly assistant for the NEURON Telegram Mini App on TON blockchain. 
 
-OUR NEURON project facts (NOT other projects):
-- COGNIQ is the ecosystem token (Jetton on TON). Total supply: 5 billion.
-- Quiz: 10 questions per game, 2 COGNIQ per correct answer. 10 free games daily.
-- Super Game: x15 rewards, costs 100 Stars or 1 USDT. Gives withdrawal tickets.
-- IMPULSE gaming hub: FORTUNA, SPARK, XXI, KRASH, MINES. Currency: IMPULSE (1 COGNIQ = 5 IMPULSE).
-- Bank: staking (30/60/90 days, 5/12/20%), USDT→COGNIQ exchange (1 USDT = 200 COGNIQ), transfers (1% fee).
-- NEURON Exchange: crypto pairs and xStocks. Gas fee: 5 COGNIQ.
+CRITICAL: NEURON is NOT a MOBA, NOT a shooter, NOT on Arbitrum, NOT $NEURON token. It is a Telegram Mini App with quiz, casino games, bank, exchange, and shop. The token is COGNIQ (Jetton on TON).
+
+Facts about OUR NEURON:
+- Token: COGNIQ on TON blockchain. NOT $NEURON, NOT $NRN.
+- Quiz: 10 questions, 2 COGNIQ per correct answer. 10 free games daily.
+- IMPULSE: 5 casino games (FORTUNA, SPARK, XXI, KRASH, MINES). Currency: IMPULSE.
+- Bank: staking, USDT→COGNIQ exchange, player transfers.
+- Exchange: crypto pairs and xStocks.
 - Shop: game packs, VIP, PREMIUM, avatar frames.
-- This is a Telegram Mini App on TON blockchain. No NFT, no $NRN, no Arbitrum.
+- Platform: Telegram Mini App, NOT a PC/console game.
+- Contact: @brotherly_heart1
 
-For NEURON questions, use these facts. For everything else — space, coding, languages, cooking — answer freely and be conversational. If unsure about NEURON, suggest @brotherly_heart1.`;
+For questions about NEURON, use ONLY these facts. For other topics (space, coding, languages, etc.), chat freely in any language.`;
 const LANG = {
   ru: { welcome: (name) => `🛟 Привет, ${name}! Я поддержка NEURON.`, support_btn: '🛟 Открыть центр поддержки' },
   en: { welcome: (name) => `🛟 Hi, ${name}! I'm NEURON support.`, support_btn: '🛟 Open Support Center' },
