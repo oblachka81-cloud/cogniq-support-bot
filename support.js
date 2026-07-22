@@ -124,12 +124,19 @@ http.createServer(async (req, res) => {
     const photos = await bot.telegram.getUserProfilePhotos(userId, { limit: 1 });
     const fileId = photos?.photos?.[0]?.[0]?.file_id || null;
     
+    // Получаем имя юзера из Telegram
+    let firstName = 'User';
+    try {
+      const chat = await bot.telegram.getChat(userId);
+      firstName = chat.first_name || chat.username || 'User';
+    } catch(e) {}
+    
     // Сохраняем или обновляем в базе
     await pool.query(
       `INSERT INTO user_avatars (user_id, first_name, tg_photo_file_id, updated_at)
-       VALUES ($1, 'User', $2, NOW())
-       ON CONFLICT (user_id) DO UPDATE SET tg_photo_file_id = $2, updated_at = NOW()`,
-      [userId, fileId]
+       VALUES ($1, $2, $3, NOW())
+       ON CONFLICT (user_id) DO UPDATE SET first_name = $2, tg_photo_file_id = $3, updated_at = NOW()`,
+      [userId, firstName, fileId]
     );
     
     let avatarUrl = null;
@@ -142,7 +149,7 @@ http.createServer(async (req, res) => {
     
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({
-      name: 'User',
+      name: firstName,
       avatar: avatarUrl
     }));
   } catch(e) {
