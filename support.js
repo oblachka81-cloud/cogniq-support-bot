@@ -99,7 +99,7 @@ async function askAI(question, mode) {
           model: `gpt://${folderId}/yandexgpt-5-lite/latest`,
           instructions: systemPrompt,
           input: question,
-          temperature: 0.3,
+          temperature: mode === 'chat' ? 0.7 : 0.2,
           max_output_tokens: 500
         })
       });
