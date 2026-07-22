@@ -33,9 +33,17 @@ async function askAI(question) {
     console.log('[SUPPORT] OPENROUTER_API_KEY не задан');
     return null;
   }
-  console.log('[SUPPORT] Запрос к AI:', question);
-  for (let attempt = 0; attempt < 2; attempt++) {
+  
+  const models = [
+    'google/gemini-2.0-flash-001:free',
+    'nvidia/nemotron-3-ultra-550b-a55b:free',
+    'mistralai/mistral-7b-instruct:free',
+    'meta-llama/llama-3.2-3b-instruct:free'
+  ];
+  
+  for (const model of models) {
     try {
+      console.log('[SUPPORT] Пробую модель:', model);
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
         headers: {
@@ -45,7 +53,7 @@ async function askAI(question) {
           'X-Title': 'COGNIQ Support Bot'
         },
         body: JSON.stringify({
-          model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
+          model: model,
           messages: [
             { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: question }
@@ -53,14 +61,24 @@ async function askAI(question) {
         })
       });
       const data = await response.json();
-      console.log('[SUPPORT] Ответ от AI:', JSON.stringify(data).slice(0, 300));
-      if (data.choices?.[0]?.message?.content) return data.choices[0].message.content;
-      console.log('[SUPPORT] Нет choices в ответе:', JSON.stringify(data));
+      
+      if (data.choices?.[0]?.message?.content) {
+        console.log('[SUPPORT] Успех с моделью:', model);
+        return data.choices[0].message.content;
+      }
+      
+      if (data.error?.code === 429) {
+        console.log('[SUPPORT] Лимит исчерпан для', model, ', пробую следующую');
+        continue;
+      }
+      
+      console.log('[SUPPORT] Ошибка модели', model, ':', JSON.stringify(data).slice(0, 200));
     } catch(e) {
-      console.log('[SUPPORT] Ошибка AI:', e.message);
+      console.log('[SUPPORT] Ошибка сети для', model, ':', e.message);
     }
   }
-  console.log('[SUPPORT] AI не ответил после 2 попыток');
+  
+  console.log('[SUPPORT] Все модели не ответили');
   return null;
 }
 
