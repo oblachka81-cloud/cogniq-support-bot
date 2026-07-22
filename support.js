@@ -26,7 +26,7 @@ CRITICAL: Give SHORT answers — 2-3 sentences max. One question = one clear ans
 KNOWLEDGE (use only what's asked):
 Token: COGNIQ on TON, 5B supply.
 Quiz: 10 questions, 2 COGNIQ each, 10 free/day. Super Game: x15, 100 Stars/1 USDT. Streaks: 3d+20, 7d+70, 14d+150, 30d+350. Daily Question +20.
-IMPULSE: FORTUNA, SPARK, XXI, KRASH, MINES. Currency: IMPULSE (1:5). Daily +500. 200 IMPULSE = 1 game.
+IMPULSE: Internal gaming currency ONLY. NOT tradable on exchange. Buy with COGNIQ (1:5) or Stars/USDT. Use for casino games. Exchange 200 IMPULSE for 1 quiz game. Daily bonus 500 IMPULSE. Games: FORTUNA, SPARK, XXI, KRASH, MINES.
 Bank: Staking 30d/5%, 60d/12%, 90d/20%. USDT→COGNIQ 1:200. Transfers 1% fee.
 Exchange: TON, USDT, BTC, XAUt0/Gold, xStocks. Gas 5 COGNIQ.
 Shop: Pack +10 games, VIP 7d, PREMIUM 30d. Frames: Basic, Cartier, Cartier Gold.
