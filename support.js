@@ -113,41 +113,45 @@ http.createServer(async (req, res) => {
 
   // Отдаём информацию о юзере из своей базы
   if (req.url.startsWith('/api/user-info') && req.method === 'GET') {
-    const urlParams = new URL(req.url, 'http://localhost');
-    const userId = urlParams.searchParams.get('user_id');
-    if (!userId) {
-      res.writeHead(400);
-      return res.end(JSON.stringify({ error: 'No user_id' }));
-    }
-    try {
-      const { rows } = await pool.query(
-        'SELECT first_name, tg_photo_file_id FROM user_avatars WHERE user_id = $1',
-        [userId]
-      );
-      if (rows[0]) {
-        const user = rows[0];
-        let avatarUrl = null;
-        if (user.tg_photo_file_id) {
-          try {
-            const file = await bot.telegram.getFile(user.tg_photo_file_id);
-            avatarUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${file.file_path}`;
-          } catch(e) {}
-        }
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-          name: user.first_name || 'User',
-          avatar: avatarUrl
-        }));
-      } else {
-        res.writeHead(404);
-        res.end(JSON.stringify({ error: 'User not found' }));
-      }
-    } catch(e) {
-      res.writeHead(500);
-      res.end(JSON.stringify({ error: 'Server error' }));
-    }
-    return;
+  const urlParams = new URL(req.url, 'http://localhost');
+  const userId = urlParams.searchParams.get('user_id');
+  if (!userId) {
+    res.writeHead(400);
+    return res.end(JSON.stringify({ error: 'No user_id' }));
   }
+  try {
+    // Всегда запрашиваем свежее фото у Telegram
+    const photos = await bot.telegram.getUserProfilePhotos(userId, { limit: 1 });
+    const fileId = photos?.photos?.[0]?.[0]?.file_id || null;
+    
+    // Сохраняем или обновляем в базе
+    await pool.query(
+      `INSERT INTO user_avatars (user_id, first_name, tg_photo_file_id, updated_at)
+       VALUES ($1, 'User', $2, NOW())
+       ON CONFLICT (user_id) DO UPDATE SET tg_photo_file_id = $2, updated_at = NOW()`,
+      [userId, fileId]
+    );
+    
+    let avatarUrl = null;
+    if (fileId) {
+      try {
+        const file = await bot.telegram.getFile(fileId);
+        avatarUrl = `https://api.telegram.org/file/bot${BOT_TOKEN}/${file.file_path}`;
+      } catch(e) {}
+    }
+    
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({
+      name: 'User',
+      avatar: avatarUrl
+    }));
+  } catch(e) {
+    console.error('[SUPPORT] user-info error:', e.message);
+    res.writeHead(500);
+    res.end(JSON.stringify({ error: 'Server error' }));
+  }
+  return;
+}
 
   if (req.url === '/api/chat' && req.method === 'POST') {
     let body = '';
