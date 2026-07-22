@@ -57,7 +57,7 @@ async function askAI(question) {
         body: JSON.stringify({
           model: 'nvidia/nemotron-3-ultra-550b-a55b:free',
           messages: [
-            { role: 'system', content: 'You are COGNIQ AI Support, a friendly and knowledgeable assistant. You are an expert on the NEURON blockchain gaming ecosystem, but you can also chat casually about other topics. Answer in the user\'s language. Be warm, helpful, and concise. If asked about NEURON, provide accurate information from your knowledge base.' },
+            { role: 'system', content: SYSTEM_PROMPT },
             { role: 'user', content: question }
           ]
         })
