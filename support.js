@@ -35,11 +35,13 @@ async function askAI(question) {
   }
   
   const models = [
-    'google/gemini-2.0-flash-001:free',
     'nvidia/nemotron-3-ultra-550b-a55b:free',
-    'mistralai/mistral-7b-instruct:free',
-    'meta-llama/llama-3.2-3b-instruct:free'
-  ];
+    'nvidia/nemotron-3-super-120b-a12b:free',
+    'google/gemma-4-31b:free',
+    'google/gemma-4-26b-a4b:free',
+    'openai/gpt-oss-20b:free',
+    'cohere/north-mini-code:free'
+];
   
   for (const model of models) {
     try {
