@@ -91,9 +91,6 @@ async function askAI(question) {
       console.log('[SUPPORT] YandexGPT успех');
       return data.output[0].content[0].text;
       }
-        console.log('[SUPPORT] YandexGPT успех');
-        return data.output_text;
-      }
       console.log('[SUPPORT] YandexGPT не ответил');
     } catch(e) {
       console.log('[SUPPORT] YandexGPT ошибка:', e.message);
