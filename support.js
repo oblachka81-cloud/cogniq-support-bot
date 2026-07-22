@@ -29,7 +29,11 @@ const LANG = {
 };
 
 async function askAI(question) {
-  if (!OPENROUTER_API_KEY) return null;
+  if (!OPENROUTER_API_KEY) {
+    console.log('[SUPPORT] OPENROUTER_API_KEY не задан');
+    return null;
+  }
+  console.log('[SUPPORT] Запрос к AI:', question);
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
@@ -49,9 +53,14 @@ async function askAI(question) {
         })
       });
       const data = await response.json();
+      console.log('[SUPPORT] Ответ от AI:', JSON.stringify(data).slice(0, 300));
       if (data.choices?.[0]?.message?.content) return data.choices[0].message.content;
-    } catch(e) {}
+      console.log('[SUPPORT] Нет choices в ответе:', JSON.stringify(data));
+    } catch(e) {
+      console.log('[SUPPORT] Ошибка AI:', e.message);
+    }
   }
+  console.log('[SUPPORT] AI не ответил после 2 попыток');
   return null;
 }
 
