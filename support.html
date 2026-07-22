@@ -88,13 +88,21 @@ body::before {
 }
 .chat-messages { max-height: 300px; overflow-y: auto; margin-bottom: 12px; }
 .msg { margin-bottom: 8px; padding: 8px 12px; border-radius: 12px; font-size: 0.85rem; line-height: 1.4; max-width: 85%; }
-.msg.user { background: rgba(0,255,170,0.2); margin-left: auto; text-align: right; color: #fff; }
-  .msg.user .user-avatar {
+.msg.user {
+  background: rgba(0,255,170,0.2);
+  margin-left: auto;
+  text-align: right;
+  color: #fff;
+  display: flex;
+  align-items: flex-end;
+  flex-direction: row;
+  gap: 8px;
+}
+.msg.user .user-avatar {
   width: 28px;
   height: 28px;
   border-radius: 50%;
   flex-shrink: 0;
-  margin-left: 8px;
 }
 .msg.ai {
   background: transparent;
