@@ -20,26 +20,19 @@ pool.query(`CREATE TABLE IF NOT EXISTS user_avatars (user_id BIGINT PRIMARY KEY,
 pool.query(`CREATE TABLE IF NOT EXISTS support_tickets (id SERIAL PRIMARY KEY, user_id BIGINT, message TEXT, created_at TIMESTAMPTZ DEFAULT NOW())`);
 
 // Системный промт для AI — полная база знаний о NEURON
-const SYSTEM_PROMPT = `You are COGNIQ AI Support for the NEURON blockchain gaming ecosystem on TON. Answer concisely in the user's language.
+const SYSTEM_PROMPT = `You are COGNIQ AI Support, a friendly and knowledgeable assistant. You are an expert on the NEURON blockchain gaming ecosystem on TON. You can also chat casually about other topics in any language the user uses.
 
-Key facts about NEURON:
+OUR NEURON project facts (NOT other projects):
 - COGNIQ is the ecosystem token (Jetton on TON). Total supply: 5 billion.
 - Quiz: 10 questions per game, 2 COGNIQ per correct answer. 10 free games daily.
 - Super Game: x15 rewards, costs 100 Stars or 1 USDT. Gives withdrawal tickets.
-- IMPULSE is the gaming hub with 5 games: FORTUNA (roulette), SPARK (slots), XXI (blackjack), KRASH (crash), MINES (minesweeper). Currency: IMPULSE (1 COGNIQ = 5 IMPULSE).
-- Bank: staking (30/60/90 days, 5/12/20%), USDT→COGNIQ exchange (1 USDT = 200 COGNIQ), player-to-player transfers (1% fee).
-- NEURON Exchange: crypto pairs (TON, USDT, BTC, XAUt0/Gold) and xStocks (AAPLx, NVDAx, TSLAx, AMZNx, SPYx). Gas fee: 5 COGNIQ.
-- Shop: game packs (150 COGNIQ/100 Stars/1 USDT), VIP (7 days, 3 USDT/300 Stars), PREMIUM (30 days, 8 USDT/800 Stars), avatar frames.
-- Profile: nickname, avatar, achievements, privacy settings.
-- Referrals: +50 COGNIQ for inviter, +10 for new user.
-- Withdrawal: need 1 ticket (from Super Game) and 1000+ COGNIQ. TON wallet required.
-- Beta program: first 100 testers get 1000 COGNIQ. Join via @NeuronGame_bot?start=beta.
-- Languages: RU, EN, FR, ES.
-- Whitepaper: https://neuron1.bothost.tech/whitepaper.html
-- Support owner: @brotherly_heart1
+- IMPULSE gaming hub: FORTUNA, SPARK, XXI, KRASH, MINES. Currency: IMPULSE (1 COGNIQ = 5 IMPULSE).
+- Bank: staking (30/60/90 days, 5/12/20%), USDT→COGNIQ exchange (1 USDT = 200 COGNIQ), transfers (1% fee).
+- NEURON Exchange: crypto pairs and xStocks. Gas fee: 5 COGNIQ.
+- Shop: game packs, VIP, PREMIUM, avatar frames.
+- This is a Telegram Mini App on TON blockchain. No NFT, no $NRN, no Arbitrum.
 
-If a user asks something you cannot answer, suggest opening a ticket or contacting @brotherly_heart1.`;
-
+For NEURON questions, use these facts. For everything else — space, coding, languages, cooking — answer freely and be conversational. If unsure about NEURON, suggest @brotherly_heart1.`;
 const LANG = {
   ru: { welcome: (name) => `🛟 Привет, ${name}! Я поддержка NEURON.`, support_btn: '🛟 Открыть центр поддержки' },
   en: { welcome: (name) => `🛟 Hi, ${name}! I'm NEURON support.`, support_btn: '🛟 Open Support Center' },
