@@ -129,22 +129,22 @@ http.createServer(async (req, res) => {
 
   if (req.method === 'OPTIONS') { res.writeHead(204); return res.end(); }
 
-  // Защита: проверяем Telegram-подпись для support.html
-  if (req.url === '/' || req.url.startsWith('/?') || req.url === '/support.html') {
-    const initData = req.headers['x-telegram-init-data'] || '';
-    const urlParams = new URL(req.url, 'http://localhost');
-    const userId = urlParams.searchParams.get('user_id');
-    
-    // Пропускаем если есть валидная подпись ИЛИ это тестовый доступ с нашим user_id
-    if (verifyInitData(initData) || userId === '8734390631' || userId === '638242293') {
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
-    } else {
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      res.end(BLOCK_PAGE);
-    }
-    return;
+  // Защита для support.html
+if (req.url === '/' || req.url.startsWith('/?') || req.url === '/support.html') {
+  const urlParams = new URL(req.url, 'http://localhost');
+  const userId = urlParams.searchParams.get('user_id');
+  const initData = req.headers['x-telegram-init-data'] || '';
+  
+  // Пропускаем если есть user_id в URL ИЛИ валидная Telegram-подпись
+  if (userId || verifyInitData(initData)) {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
+  } else {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(BLOCK_PAGE);
   }
+  return;
+}
 
   if (req.url.startsWith('/api/user-info') && req.method === 'GET') {
     const urlParams = new URL(req.url, 'http://localhost');
