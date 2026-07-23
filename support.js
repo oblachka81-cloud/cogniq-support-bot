@@ -203,22 +203,22 @@ http.createServer(async (req, res) => {
   if (pathname === '/' || pathname === '/support.html') {
     let allowed = false;
     if (userId) {
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 5000);
-        const check = await fetch(`https://neuron1.bothost.tech/api/check-user?user_id=${userId}`, {
-          signal: controller.signal,
-          headers: { 'Accept': 'application/json' }
-        });
-        clearTimeout(timeoutId);
-        if (check.ok) {
-          const data = await check.json();
-          allowed = !!data.exists;
-        }
-      } catch(e) {
-        console.error('Error fetching from Main Bot:', e.message);
-      }
+  try {
+    const checkUrl = `https://neuron1.bothost.tech/api/check-user?user_id=${userId}`;
+    console.log('Checking:', checkUrl);
+    const check = await fetch(checkUrl, { headers: { 'Accept': 'application/json' } });
+    const text = await check.text();
+    console.log('Check response:', text);
+    try {
+      const data = JSON.parse(text);
+      allowed = !!data.exists;
+    } catch(e) {
+      console.log('JSON parse error:', e.message);
     }
+  } catch(e) {
+    console.error('Fetch error:', e.message);
+  }
+}
     
         if (allowed) {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
