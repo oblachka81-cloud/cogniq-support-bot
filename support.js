@@ -200,6 +200,28 @@ http.createServer(async (req, res) => {
   res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
   return;
 }
+  if (req.url === '/api/check-access' && req.method === 'POST') {
+  let body = '';
+  req.on('data', chunk => body += chunk);
+  req.on('end', async () => {
+    try {
+      const data = JSON.parse(body);
+      const userId = data.user_id;
+      let allowed = false;
+      if (userId) {
+        const check = await fetch(`https://neuron1.bothost.tech/api/check-user?user_id=${userId}`);
+        const result = await check.json();
+        allowed = !!result.exists;
+      }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ allowed }));
+    } catch(e) {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ allowed: false }));
+    }
+  });
+  return;
+}
 
     if (req.url === '/support_avatar.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
