@@ -282,25 +282,32 @@ try {
   }
 } catch(e) {}
 
-// Если не из Telegram — блокируем
+// ЛОГИРОВАНИЕ — покажет, что мы получили
+var debugDiv = document.createElement('div');
+debugDiv.style.cssText = 'position:fixed;top:0;left:0;background:#000;color:#0f0;padding:10px;font-size:12px;z-index:9999;max-width:100%;word-break:break-all;';
+debugDiv.textContent = 'USER_ID: ' + (USER_ID || 'NULL') + ' | URL: ' + window.location.search + ' | TG: ' + (window.Telegram?.WebApp ? 'YES' : 'NO');
+document.body.appendChild(debugDiv);
+
 if (!USER_ID) {
   document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#fff;font-family:sans-serif;text-align:center;background:#0a0a0f;"><div><h1>🚫</h1><p>Доступ только через NEURON</p><p><a href="https://t.me/NeuronGame_bot" style="color:#00ffaa;text-decoration:none;font-weight:700;">🚀 Открыть в NEURON</a></p></div></div>';
   throw new Error('Access denied');
 }
 
-// Проверяем, есть ли юзер в базе NEURON
 fetch('/api/check-access', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({ user_id: USER_ID })
 })
-  .then(function(r) { return r.json(); })
-  .then(function(data) {
-    if (!data.exists) {
-      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#fff;font-family:sans-serif;text-align:center;background:#0a0a0f;"><div><h1>🚫</h1><p>Доступ только через NEURON</p><p><a href="https://t.me/NeuronGame_bot" style="color:#00ffaa;text-decoration:none;font-weight:700;">🚀 Открыть в NEURON</a></p></div></div>';
-    }
-  })
-  .catch(function() {});
+.then(function(r) { return r.json(); })
+.then(function(data) {
+  debugDiv.textContent += ' | CHECK: ' + JSON.stringify(data);
+  if (!data.allowed) {
+    document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#fff;font-family:sans-serif;text-align:center;background:#0a0a0f;"><div><h1>🚫</h1><p>Доступ только через NEURON</p><p><a href="https://t.me/NeuronGame_bot" style="color:#00ffaa;text-decoration:none;font-weight:700;">🚀 Открыть в NEURON</a></p></div></div>';
+  }
+})
+.catch(function(err) {
+  debugDiv.textContent += ' | ERROR: ' + err.message;
+});
 
 var USER_NAME = 'You';
 var USER_AVATAR = null;
