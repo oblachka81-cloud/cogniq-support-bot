@@ -275,7 +275,29 @@ applyUILang();
 var USER_ID = null;
 var urlParams = new URLSearchParams(window.location.search);
 USER_ID = urlParams.get('user_id');
-try { var tg = window.Telegram?.WebApp; if (!USER_ID && tg?.initDataUnsafe?.user) USER_ID = tg.initDataUnsafe.user.id; } catch(e) {}
+try {
+  var tg = window.Telegram?.WebApp;
+  if (!USER_ID && tg?.initDataUnsafe?.user) {
+    USER_ID = tg.initDataUnsafe.user.id;
+  }
+} catch(e) {}
+
+// Если не из Telegram — блокируем
+if (!USER_ID) {
+  document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#fff;font-family:sans-serif;text-align:center;background:#0a0a0f;"><div><h1>🚫</h1><p>Доступ только через NEURON</p><p><a href="https://t.me/NeuronGame_bot" style="color:#00ffaa;text-decoration:none;font-weight:700;">🚀 Открыть в NEURON</a></p></div></div>';
+  throw new Error('Access denied');
+}
+
+// Проверяем, есть ли юзер в базе NEURON
+fetch('https://neuron1.bothost.tech/api/check-user?user_id=' + USER_ID)
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    if (!data.exists) {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#fff;font-family:sans-serif;text-align:center;background:#0a0a0f;"><div><h1>🚫</h1><p>Доступ только через NEURON</p><p><a href="https://t.me/NeuronGame_bot" style="color:#00ffaa;text-decoration:none;font-weight:700;">🚀 Открыть в NEURON</a></p></div></div>';
+    }
+  })
+  .catch(function() {});
+
 var USER_NAME = 'You';
 var USER_AVATAR = null;
 if (USER_ID) {
