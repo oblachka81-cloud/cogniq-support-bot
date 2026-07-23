@@ -222,6 +222,9 @@ http.createServer(async (req, res) => {
     } else if (req.url === '/support_mode_chat.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(fs.readFileSync(path.join(__dirname, 'support_mode_chat.png')));
+    } else if (req.url === '/support_back_btn.png') {
+    res.writeHead(200, { 'Content-Type': 'image/png' });
+    res.end(fs.readFileSync(path.join(__dirname, 'support_back_btn.png')));
   } else {
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('COGNIQ AI Support');
