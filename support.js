@@ -21,7 +21,7 @@ const pool = new Pool({ connectionString: DATABASE_URL, ssl: false });
 pool.query(`CREATE TABLE IF NOT EXISTS user_langs (user_id BIGINT PRIMARY KEY, lang VARCHAR(5))`);
 pool.query(`CREATE TABLE IF NOT EXISTS user_avatars (user_id BIGINT PRIMARY KEY, first_name TEXT, tg_photo_file_id TEXT, updated_at TIMESTAMPTZ DEFAULT NOW())`);
 pool.query(`CREATE TABLE IF NOT EXISTS support_tickets (id SERIAL PRIMARY KEY, user_id BIGINT, message TEXT, created_at TIMESTAMPTZ DEFAULT NOW())`);
-
+const BLOCK_PAGE = `<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>NEURON Support</title><style>body{background:#0a0a0f;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;text-align:center;}a{color:#00ffaa;text-decoration:none;font-weight:700;}</style></head><body><div><h1>🚫</h1><p>Доступ только через NEURON</p><p><a href="https://t.me/NeuronGame_bot">🚀 Открыть в NEURON</a></p></div></body></html>`;
 const SYSTEM_PROMPT_SUPPORT = `You are COGNIQ AI Support for NEURON on TON. Deep knowledge of the entire project. Answer in user's language.
 
 CRITICAL: Give SHORT answers — 2-3 sentences max. One question = one clear answer. Never dump all facts.
@@ -196,25 +196,40 @@ http.createServer(async (req, res) => {
   }
 
   if (req.url === '/' || req.url.startsWith('/?') || req.url === '/support.html') {
-  const urlParams = new URL(req.url, 'http://localhost');
-  const userId = urlParams.searchParams.get('user_id');
+  const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
+  const pathname = parsedUrl.pathname;
+  const userId = parsedUrl.searchParams.get('user_id');
   
-  let allowed = false;
-  if (userId) {
-    try {
-      const check = await fetch(`https://neuron1.bothost.tech/api/check-user?user_id=${userId}`);
-      const data = await check.json();
-      allowed = data.exists;
-    } catch(e) {}
+  if (pathname === '/' || pathname === '/support.html') {
+    let allowed = false;
+    if (userId) {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        const check = await fetch(`https://neuron1.bothost.tech/api/check-user?user_id=${userId}`, {
+          signal: controller.signal,
+          headers: { 'Accept': 'application/json' }
+        });
+        clearTimeout(timeoutId);
+        if (check.ok) {
+          const data = await check.json();
+          allowed = !!data.exists;
+        }
+      } catch(e) {
+        console.error('Error fetching from Main Bot:', e.message);
+      }
+    }
+    
+    if (allowed) {
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
+    } else {
+      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+      res.end(BLOCK_PAGE);
+    }
   }
-  
-  if (allowed) {
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
-  } else {
-    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-    res.end(BLOCK_PAGE);
-  }
+  return;
+}
 } else if (req.url === '/support_avatar.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(fs.readFileSync(path.join(__dirname, 'support_avatar.png')));
