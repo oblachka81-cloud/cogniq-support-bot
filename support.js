@@ -196,40 +196,11 @@ http.createServer(async (req, res) => {
   }
 
   if (req.url === '/' || req.url.startsWith('/?') || req.url === '/support.html') {
-  const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
-  const pathname = parsedUrl.pathname;
-  const userId = parsedUrl.searchParams.get('user_id');
-  
-  if (pathname === '/' || pathname === '/support.html') {
-    let allowed = false;
-    if (userId) {
-  try {
-    const checkUrl = `https://neuron1.bothost.tech/api/check-user?user_id=${userId}`;
-    console.log('Checking:', checkUrl);
-    const check = await fetch(checkUrl, { headers: { 'Accept': 'application/json' } });
-    const text = await check.text();
-    console.log('Check response:', text);
-    try {
-      const data = JSON.parse(text);
-      allowed = !!data.exists;
-    } catch(e) {
-      console.log('JSON parse error:', e.message);
-    }
-  } catch(e) {
-    console.error('Fetch error:', e.message);
-  }
-}
-    
-        if (allowed) {
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
-    } else {
-      res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-      res.end(BLOCK_PAGE);
-    }
-  }
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
   return;
 }
+
     if (req.url === '/support_avatar.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(fs.readFileSync(path.join(__dirname, 'support_avatar.png')));
