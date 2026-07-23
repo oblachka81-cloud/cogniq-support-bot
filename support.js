@@ -220,7 +220,7 @@ http.createServer(async (req, res) => {
       }
     }
     
-    if (allowed) {
+        if (allowed) {
       res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
       res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
     } else {
@@ -230,7 +230,7 @@ http.createServer(async (req, res) => {
   }
   return;
 }
-} else if (req.url === '/support_avatar.png') {
+  } else if (req.url === '/support_avatar.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(fs.readFileSync(path.join(__dirname, 'support_avatar.png')));
   } else if (req.url === '/support_bg.webp') {
