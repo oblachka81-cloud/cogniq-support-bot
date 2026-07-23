@@ -4,6 +4,9 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
+process.on('uncaughtException', (err) => console.error('Uncaught Exception:', err));
+process.on('unhandledRejection', (reason, promise) => console.error('Unhandled Rejection:', reason));
+
 const BOT_TOKEN = process.env.BOT_TOKEN;
 const DATABASE_URL = process.env.DATABASE_URL;
 const WEBAPP_URL = process.env.WEBAPP_URL || 'https://cogniqai.bothost.tech';
