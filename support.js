@@ -193,9 +193,26 @@ http.createServer(async (req, res) => {
   }
 
   if (req.url === '/' || req.url.startsWith('/?') || req.url === '/support.html') {
+  const urlParams = new URL(req.url, 'http://localhost');
+  const userId = urlParams.searchParams.get('user_id');
+  
+  let allowed = false;
+  if (userId) {
+    try {
+      const check = await fetch(`https://neuron1.bothost.tech/api/check-user?user_id=${userId}`);
+      const data = await check.json();
+      allowed = data.exists;
+    } catch(e) {}
+  }
+  
+  if (allowed) {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
     res.end(fs.readFileSync(path.join(__dirname, 'support.html')));
-  } else if (req.url === '/support_avatar.png') {
+  } else {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+    res.end(BLOCK_PAGE);
+  }
+} else if (req.url === '/support_avatar.png') {
     res.writeHead(200, { 'Content-Type': 'image/png' });
     res.end(fs.readFileSync(path.join(__dirname, 'support_avatar.png')));
   } else if (req.url === '/support_bg.webp') {
