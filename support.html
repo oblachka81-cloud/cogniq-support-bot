@@ -289,7 +289,11 @@ if (!USER_ID) {
 }
 
 // Проверяем, есть ли юзер в базе NEURON
-fetch('https://neuron1.bothost.tech/api/check-user?user_id=' + USER_ID)
+fetch('/api/check-access', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ user_id: USER_ID })
+})
   .then(function(r) { return r.json(); })
   .then(function(data) {
     if (!data.exists) {
